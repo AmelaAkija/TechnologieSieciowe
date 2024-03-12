@@ -18,6 +18,17 @@ public class Book {
     @OneToMany(mappedBy = "bookLoan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Loan> bookLoanList;
 
+    @OneToMany(mappedBy = "bookReview", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> bookReviewList;
+
+    public List<Review> getBookReviewList() {
+        return bookReviewList;
+    }
+
+    public void setBookReviewList(List<Review> bookReviewList) {
+        this.bookReviewList = bookReviewList;
+    }
+
     public Integer getBookId() {
         return bookId;
     }

@@ -17,6 +17,16 @@ public class User {
     private String fullusername;
     @OneToMany(mappedBy = "userLoan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Loan> userLoanList;
+    @OneToMany(mappedBy = "userReview", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> userReviewList;
+
+    public List<Review> getUserReviewList() {
+        return userReviewList;
+    }
+
+    public void setUserReviewList(List<Review> userReviewList) {
+        this.userReviewList = userReviewList;
+    }
 
     public Integer getUserId() {
         return userId;
