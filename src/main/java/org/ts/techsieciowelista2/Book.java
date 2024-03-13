@@ -21,6 +21,7 @@ public class Book {
     @OneToMany(mappedBy = "bookReview", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> bookReviewList;
 
+
     public List<Review> getBookReviewList() {
         return bookReviewList;
     }
