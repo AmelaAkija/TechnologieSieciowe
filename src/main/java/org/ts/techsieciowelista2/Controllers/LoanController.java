@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/Loan")
 public class LoanController {
     private final LoanRepository loanRepository;
-
-
     @Autowired
     public LoanController(LoanRepository loanRepository){
         this.loanRepository = loanRepository;
