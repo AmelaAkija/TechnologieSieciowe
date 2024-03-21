@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.ts.techsieciowelista2.LoginForm;
 import org.ts.techsieciowelista2.Repositories.UserRepository;
+import org.ts.techsieciowelista2.User;
 
 import java.util.Date;
 
@@ -15,7 +16,7 @@ import java.util.Date;
 public class LoginService {
     private UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    @Value("${jet.token.key}")
+    @Value("${jwt.token.key}")
     private String key;
     // konstruktor z Autowired
     @Autowired
@@ -24,22 +25,22 @@ public class LoginService {
         this.userRepository = userRepository;
     }
     public String userLogin(LoginForm loginForm){
-        //String hashPassword = loginForm.getPassword();
+        String login = loginForm.getLogin();
+        //String password = loginForm.getPassword();
+        String hashPassword = userRepository.findHashedPasswordByUsername(login);
         //tutaj pobrać dane uzytkownika z bazy do porównania
-        if(passwordEncoder.matches(loginForm.getPassword(), "hash hasła z bazy danych")){
+        if(passwordEncoder.matches(loginForm.getPassword(), hashPassword)){
             long timeMillis = System.currentTimeMillis();
+            User username = userRepository.findByUsername(login);
             String token = Jwts.builder()
                     .issuedAt(new Date(timeMillis))
                     .expiration(new Date(timeMillis+5*60*1000))
-                    .claim("id", "id użytkownika z bazy danych")
-                    .claim("role", "rola użytkownika z bazy danych")
+                    .claim("id", username)
+                    .claim("role", username.getRole())
                     .signWith(SignatureAlgorithm.HS256,key)
                     .compact();
             return token;
         }else{
             return null;
-        }
-
-
-    }
+        }}
 }
