@@ -25,9 +25,10 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTTokenFilter(key), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/Login").permitAll()
-                        .requestMatchers("/User/**").permitAll()
-                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/User/**").hasRole("LIBRARIAN")
+                        .requestMatchers("/users/**").hasRole("LIBRARIAN")
                         .requestMatchers("/book").hasRole("READER"))
+
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
 

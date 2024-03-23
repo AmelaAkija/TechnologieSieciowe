@@ -29,8 +29,8 @@ public class JWTTokenFilter extends OncePerRequestFilter {
         if(headerAuth!=null && headerAuth.startsWith("Bearer ")){
             String token = headerAuth.split(" ")[1];
             Claims claims = Jwts.parser().setSigningKey(key).build().parseSignedClaims(token).getPayload();
-            String userId = (String) claims.get("id");
-            String role = (String) claims.get("role");
+            String userId = String.valueOf(claims.get("id"));
+            String role = String.valueOf(claims.get("role"));
             Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, List.of(new SimpleGrantedAuthority(role)));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }else{

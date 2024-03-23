@@ -12,12 +12,8 @@ import java.util.Date;
 
 @Repository
 public interface UserRepository extends CrudRepository<User,Integer> {
-    @Query("SELECT u.username, u.password FROM User u WHERE u.userId = :userId")
-    void removeUserBy(@Param("userId") Integer userId);
     @Query("SELECT u.password FROM User u WHERE u.username = :username")
     String findHashedPasswordByUsername(@Param("username") String username);
     User findByUsername(String username);
-
-
 }
 
