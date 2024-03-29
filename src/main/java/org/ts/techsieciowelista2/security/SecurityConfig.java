@@ -28,7 +28,6 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTTokenFilter(key), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/Login").permitAll()
-                        .requestMatchers("/User/**").hasRole("LIBRARIAN")
                         .requestMatchers("/users/**").hasRole("LIBRARIAN")
                         .requestMatchers("/book").hasRole("READER"))
 
@@ -36,5 +35,4 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
 
     }
-
 }
