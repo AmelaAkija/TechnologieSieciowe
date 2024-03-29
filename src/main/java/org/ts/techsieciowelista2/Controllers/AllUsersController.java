@@ -2,6 +2,7 @@ package org.ts.techsieciowelista2.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.ts.techsieciowelista2.Repositories.UserRepository;
 import org.ts.techsieciowelista2.User;
+
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -25,17 +29,24 @@ public class AllUsersController {
     @PostMapping("/Add")
     @PreAuthorize("hasRole('LIBRARIAN')")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public User addUser(@RequestBody User user) {
-
+    public User addUser(@RequestBody User user){
+        User userExists = userRepository.findByUsername(user.getUsername());
+        if (userExists != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User " + user.getUsername() + " already exists.");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasRole('LIBRARIAN')")
     String removeUser(@PathVariable Integer userId){
-
-        userRepository.deleteById(userId);
-        return "User with id " + userId + " has been successfully deleted";
+        if (userRepository.existsById(userId)) {
+            userRepository.deleteById(userId);
+            return "User with id " + userId + " has been successfully deleted";}
+        else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " not found");
+        }
     }
 
 }

@@ -1,6 +1,8 @@
 package org.ts.techsieciowelista2.security;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -14,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //W bazie nazwa roli ROLE_NAZWA
 @Configuration
 @EnableMethodSecurity
+@EnableAutoConfiguration(exclude = {ErrorMvcAutoConfiguration.class})
 public class SecurityConfig {
     @Value("${jwt.token.key}")
     private String key;
@@ -33,4 +36,5 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
 
     }
+
 }
