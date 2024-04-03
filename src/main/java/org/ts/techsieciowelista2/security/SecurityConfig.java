@@ -29,7 +29,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/Login").permitAll()
                         .requestMatchers("/users/**").hasRole("LIBRARIAN")
-                        .requestMatchers("/book").hasRole("READER"))
+                        .requestMatchers("/Book/Add").hasRole("LIBRARIAN")
+                        .requestMatchers("/Book/GetAll").permitAll()
+                        .requestMatchers("/Loan/**").permitAll())
 
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
