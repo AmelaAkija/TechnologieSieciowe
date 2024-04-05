@@ -1,5 +1,6 @@
 package org.ts.techsieciowelista2.Controllers;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,14 @@ public class AllUsersController {
         else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " not found");
         }
+    }
+    @PutMapping("/{userId}")
+    @Transactional
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    public ResponseEntity<String> updateUser(@PathVariable Integer userId, @RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.updateUser(userId, user.getUsername(), user.getPassword(), user.getMail(), user.getFullusername());
+        return ResponseEntity.ok("User with id " + userId + " has been updated");
     }
 
 }

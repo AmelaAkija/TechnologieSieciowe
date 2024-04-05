@@ -33,7 +33,8 @@ public class SecurityConfig {
                         .requestMatchers("/Book/GetAll").permitAll()
                         .requestMatchers("/Book/SearchBy/**").permitAll()
                         .requestMatchers("/Book/deleteBook/**").hasRole("LIBRARIAN")
-                        .requestMatchers("/Loan/**").permitAll())
+                        .requestMatchers("/Book/updateBook/**").hasRole("LIBRARIAN")
+                        .requestMatchers("/Loan/**").hasRole("LIBRARIAN"))
 
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();

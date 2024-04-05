@@ -1,6 +1,9 @@
 package org.ts.techsieciowelista2.Controllers;
 
+import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 import org.ts.techsieciowelista2.Repositories.BookRepository;
 import org.ts.techsieciowelista2.Book;
@@ -15,6 +18,7 @@ import java.util.List;
 @RequestMapping("/Book")
 public class BookController {
     private final BookRepository bookRepository;
+
     @Autowired
     public BookController(BookRepository bookRepository){
         this.bookRepository = bookRepository;
@@ -45,6 +49,13 @@ public class BookController {
     public @ResponseBody Iterable<Book> searchByAuthor(@PathVariable String author) {
         return bookRepository.findByAuthor(author);
     }
+    @PutMapping("/updateBook/{bookId}")
+    @Transactional
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    public ResponseEntity<String> updateBook(@PathVariable int bookId, @RequestBody Book book) {
+        bookRepository.updateBook(bookId, book.getTitle(), book.getAuthor(), book.getPublisher(), book.getPublishYear(), book.getAvailableCopies());
+        return ResponseEntity.ok("Book with id " + bookId + " has been updated");
+    }
     @DeleteMapping("/deleteBook/{bookId}")
     @PreAuthorize("hasRole('LIBRARIAN')")
     String removeBook(@PathVariable Integer bookId){
@@ -54,4 +65,5 @@ public class BookController {
         else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with id " + bookId + " not found");
         }
-}}
+}
+}
