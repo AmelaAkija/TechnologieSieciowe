@@ -2,15 +2,17 @@ package org.ts.techsieciowelista2;
 
 import jakarta.persistence.*;
 
+import java.sql.Date;
+
 
 @Entity
 public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer loanId;
-    private String loanDateStart;
+    private Date loanDateStart;
     private Integer loanPeriod;
-    private String loanDateEnd;
+    private Date loanDateEnd;
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User userLoan;
@@ -18,6 +20,22 @@ public class Loan {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "book_id")
     private Book bookLoan;
+
+    public Date getLoanDateStart() {
+        return loanDateStart;
+    }
+
+    public void setLoanDateStart(Date loanDateStart) {
+        this.loanDateStart = loanDateStart;
+    }
+
+    public Date getLoanDateEnd() {
+        return loanDateEnd;
+    }
+
+    public void setLoanDateEnd(Date loanDateEnd) {
+        this.loanDateEnd = loanDateEnd;
+    }
 
     public Integer getLoanId() {
         return loanId;
@@ -27,13 +45,7 @@ public class Loan {
         this.loanId = loanId;
     }
 
-    public String getLoanDateStart() {
-        return loanDateStart;
-    }
 
-    public void setLoanDateStart(String loanDateStart) {
-        this.loanDateStart = loanDateStart;
-    }
 
     public Integer getLoanPeriod() {
         return loanPeriod;
@@ -43,13 +55,7 @@ public class Loan {
         this.loanPeriod = loanPeriod;
     }
 
-    public String getLoanDateEnd() {
-        return loanDateEnd;
-    }
 
-    public void setLoanDateEnd(String loanDateEnd) {
-        this.loanDateEnd = loanDateEnd;
-    }
 
     public User getUserLoan() {
         return userLoan;

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.ts.techsieciowelista2.User;
+import org.ts.techsieciowelista2.service.BookService;
 
 import java.util.List;
 
@@ -18,10 +19,12 @@ import java.util.List;
 @RequestMapping("/Book")
 public class BookController {
     private final BookRepository bookRepository;
+    private BookService bookService;
 
     @Autowired
-    public BookController(BookRepository bookRepository){
+    public BookController(BookRepository bookRepository, BookService bookService){
         this.bookRepository = bookRepository;
+        this.bookService = bookService;
     }
     @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping("/Add")
@@ -35,7 +38,7 @@ public class BookController {
     }
     @GetMapping("/GetAll")
     public @ResponseBody Iterable<Book> getAllBooks(){
-        return bookRepository.findAll();
+        return bookService.getAllBooks();
     }
     @GetMapping("/SearchBy/Isbn/{isbn}")
     public Book searchByIsbn(@PathVariable String isbn) {

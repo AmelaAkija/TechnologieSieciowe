@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -45,6 +47,30 @@ public class LoanController {
     @GetMapping("/GetAll")
     public @ResponseBody Iterable<Loan> getAllLoans(){
         return loanRepository.findAll();
+    }
+
+    @DeleteMapping("/deleteLoan/{loanId}")
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    String removeLoan(@PathVariable Integer loanId){
+        Loan loan = loanRepository.findByLoanId(loanId);
+        Date expectedReturnDate = loan.getLoanDateEnd();
+        LocalDate localDate = LocalDate.now();
+        Date currentDate = Date.valueOf(localDate);
+//        if(currentDate.compareTo(expectedReturnDate)>0){
+//            return "Book returned after allowed period";
+//        }
+//        else{
+        if (loanRepository.existsById(loanId)) {
+            loanRepository.deleteById(loanId);
+            if(currentDate.compareTo(expectedReturnDate)>0){
+                return "Book returned after allowed period";
+            }
+            else{
+                return "Book returned in time";
+            }}
+        else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan with id " + loanId + " not found");}
+
     }
 
 
