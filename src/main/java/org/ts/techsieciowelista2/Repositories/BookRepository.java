@@ -10,6 +10,7 @@ import org.ts.techsieciowelista2.Book;
 
 @Repository
 public interface BookRepository extends CrudRepository<Book,Integer> {
+    Book findById(int bookId);
     Book findByIsbn(String isbn);
     Iterable<Book> findByTitle(String title);
     Iterable<Book> findByAuthor(String author);
