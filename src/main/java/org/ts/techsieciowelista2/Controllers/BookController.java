@@ -3,28 +3,22 @@ package org.ts.techsieciowelista2.Controllers;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 import org.ts.techsieciowelista2.Repositories.BookRepository;
 import org.ts.techsieciowelista2.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.ts.techsieciowelista2.User;
-import org.ts.techsieciowelista2.service.BookService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/Book")
 public class BookController {
     private final BookRepository bookRepository;
-    private BookService bookService;
+
 
     @Autowired
-    public BookController(BookRepository bookRepository, BookService bookService){
+    public BookController(BookRepository bookRepository){
         this.bookRepository = bookRepository;
-        this.bookService = bookService;
     }
     @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping("/Add")
@@ -35,10 +29,6 @@ public class BookController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Book " + book.getIsbn() + " already in database.");
         }
         return bookRepository.save(book);
-    }
-    @GetMapping("/GetAll")
-    public @ResponseBody Iterable<Book> getAllBooks(){
-        return bookService.getAllBooks();
     }
     @GetMapping("/SearchBy/Isbn/{isbn}")
     public Book searchByIsbn(@PathVariable String isbn) {
@@ -51,6 +41,10 @@ public class BookController {
     @GetMapping("/SearchBy/author/{author}")
     public @ResponseBody Iterable<Book> searchByAuthor(@PathVariable String author) {
         return bookRepository.findByAuthor(author);
+    }
+    @GetMapping("/GetAll")
+    public @ResponseBody Iterable<Book> getAllBooks(){
+        return bookRepository.findAll();
     }
     @PutMapping("/updateBook/{bookId}")
     @Transactional

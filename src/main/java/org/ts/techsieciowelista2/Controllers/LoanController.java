@@ -1,5 +1,7 @@
 package org.ts.techsieciowelista2.Controllers;
 
+import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.server.ResponseStatusException;
 import org.ts.techsieciowelista2.Book;
@@ -51,18 +53,46 @@ public class LoanController {
 
     @DeleteMapping("/deleteLoan/{loanId}")
     @PreAuthorize("hasRole('LIBRARIAN')")
-    String removeLoan(@PathVariable Integer loanId){
-        Loan loan = loanRepository.findByLoanId(loanId);
-        Date expectedReturnDate = loan.getLoanDateEnd();
-        LocalDate localDate = LocalDate.now();
-        Date currentDate = Date.valueOf(localDate);
-//        if(currentDate.compareTo(expectedReturnDate)>0){
-//            return "Book returned after allowed period";
-//        }
-//        else{
+    String removeLoan(@PathVariable Integer loanId) {
         if (loanRepository.existsById(loanId)) {
             loanRepository.deleteById(loanId);
-            if(currentDate.compareTo(expectedReturnDate)>0){
+            return "Loan " + loanId + " has been successfully deleted";}
+        else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan with id " + loanId + " not found");}
+//        Loan loan = loanRepository.findByLoanId(loanId);
+//        Date startdate = loan.getLoanDateStart();
+//        LocalDate localDate = startdate.toLocalDate();
+//        LocalDate expectedReturnDate = localDate.plusDays(loan.getLoanPeriod());
+//        LocalDate returnDate = loan.getLoanDateEnd().toLocalDate();
+//        if (loanRepository.existsById(loanId)) {
+//            loanRepository.deleteById(loanId);
+//            if(returnDate.compareTo(expectedReturnDate)>0){
+//                return "Book returned after allowed period";
+//            }
+//            else{
+//                return "Book returned in time";
+//            }}
+//        else{
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan with id " + loanId + " not found");}
+
+    }
+    @PutMapping("/{loanId}")
+    @Transactional
+    @PreAuthorize("hasRole('LIBRARIAN')")
+    public String updateLoan(@PathVariable Integer loanId, @RequestBody Loan loan) {
+//        loan = loanRepository.findByLoanId(loanId);
+//        Date startdate = loan.getLoanDateStart();
+//        LocalDate localDate = startdate.toLocalDate();
+//        LocalDate expectedReturnDate = localDate.plusDays(loan.getLoanPeriod());
+//        LocalDate returnDate = loan.getLoanDateEnd().toLocalDate();
+        if (loanRepository.existsById(loanId)) {
+            loanRepository.updateLoan(loanId, loan.getLoanDateEnd());
+            loan = loanRepository.findByLoanId(loanId);
+            Date startdate = loan.getLoanDateStart();
+            LocalDate localDate = startdate.toLocalDate();
+            LocalDate expectedReturnDate = localDate.plusDays(loan.getLoanPeriod());
+            LocalDate returnDate = loan.getLoanDateEnd().toLocalDate();
+            if(returnDate.compareTo(expectedReturnDate)>0){
                 return "Book returned after allowed period";
             }
             else{
@@ -72,7 +102,5 @@ public class LoanController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan with id " + loanId + " not found");}
 
     }
-
-
 
 }

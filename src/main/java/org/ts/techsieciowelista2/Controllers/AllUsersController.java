@@ -38,6 +38,10 @@ public class AllUsersController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+    @GetMapping("/GetAll")
+    public @ResponseBody Iterable<User> getAllUsers(){
+        return userRepository.findAll();
+    }
 
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasRole('LIBRARIAN')")
