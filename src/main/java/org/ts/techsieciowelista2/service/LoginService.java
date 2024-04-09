@@ -12,18 +12,31 @@ import org.ts.techsieciowelista2.User;
 
 import java.util.Date;
 
+/**
+ * Login service
+ */
 @Service
 public class LoginService {
     private UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     @Value("${jwt.token.key}")
     private String key;
+
+    /**
+     * @param passwordEncoder
+     * @param userRepository
+     */
     // konstruktor z Autowired
     @Autowired
     public LoginService(PasswordEncoder passwordEncoder, UserRepository userRepository){
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
+
+    /**
+     * @param loginForm
+     * @return token
+     */
     public String userLogin(LoginForm loginForm){
         String login = loginForm.getLogin();
         //String password = loginForm.getPassword();

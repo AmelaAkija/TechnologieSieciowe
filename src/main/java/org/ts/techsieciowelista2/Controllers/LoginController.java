@@ -9,19 +9,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.ts.techsieciowelista2.LoginForm;
 import org.ts.techsieciowelista2.service.LoginService;
+
+/**
+ * Login controller
+ */
 @RestController
 public class LoginController {
     private final LoginService loginService;
+
+    /**
+     * @param loginService
+     */
     @Autowired
     public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }
+
+    /**
+     * @param loginForm
+     * @return information if login data are correct
+     */
     @PostMapping("/Login")
-    public ResponseEntity<String> login(@RequestBody LoginForm loginForm){
-        String token  = loginService.userLogin(loginForm);
-        if(token==null){
+    public ResponseEntity<String> login(@RequestBody LoginForm loginForm) {
+        String token = loginService.userLogin(loginForm);
+        if (token == null) {
             return new ResponseEntity<>("Wrong login or password", HttpStatus.UNAUTHORIZED);
-        }else{
+        } else {
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
     }

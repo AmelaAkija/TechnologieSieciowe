@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
+/**
+ * Book entity
+ */
 @Entity
 public class Book {
     @Id

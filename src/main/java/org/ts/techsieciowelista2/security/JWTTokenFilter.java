@@ -17,23 +17,37 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * JWTTokenFilter
+ */
 public class JWTTokenFilter extends OncePerRequestFilter {
     private final String key;
-    public JWTTokenFilter(String key){
+
+    /**
+     * @param key
+     */
+    public JWTTokenFilter(String key) {
         this.key = key;
     }
 
+    /**
+     * @param request
+     * @param response
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String headerAuth = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(headerAuth!=null && headerAuth.startsWith("Bearer ")){
+        if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
             String token = headerAuth.split(" ")[1];
             Claims claims = Jwts.parser().setSigningKey(key).build().parseSignedClaims(token).getPayload();
             String userId = String.valueOf(claims.get("id"));
             String role = String.valueOf(claims.get("role"));
             Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, List.of(new SimpleGrantedAuthority(role)));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }else{
+        } else {
             SecurityContextHolder.getContext().setAuthentication(null);
         }
         filterChain.doFilter(request, response);

@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import java.sql.Date;
 import java.util.List;
 
+/**
+ * Detail entity
+ */
 @Entity
 @Table(name = "detail")
 public class Detail {

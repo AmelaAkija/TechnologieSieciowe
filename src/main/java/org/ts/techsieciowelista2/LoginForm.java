@@ -1,5 +1,8 @@
 package org.ts.techsieciowelista2;
 
+/**
+ * LoginForm entity
+ */
 public class LoginForm {
     private String password;
     private String login;

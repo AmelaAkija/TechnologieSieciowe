@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import java.sql.Date;
 import java.util.List;
 
+/**
+ * Review entity
+ */
 @Entity
 @Table(name = "review")
 public class Review {
