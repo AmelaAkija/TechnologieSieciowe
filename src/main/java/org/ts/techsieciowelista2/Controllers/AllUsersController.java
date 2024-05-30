@@ -85,8 +85,9 @@ public class AllUsersController {
     @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<String> updateUser(@PathVariable Integer userId, @RequestBody User user) {
         if (userRepository.existsById(userId)) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.updateUser(userId, user.getUsername(), user.getPassword(), user.getMail(), user.getFullusername());
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.updateUser(userId, user.getUsername(), user.getPassword(), user.getMail(), user.getFullusername());
+
         return ResponseEntity.ok("User with id " + userId + " has been updated");}
         else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " not found");

@@ -39,6 +39,7 @@ public class LoginService {
      */
     public String userLogin(LoginForm loginForm){
         String login = loginForm.getLogin();
+        System.out.println("Login attempt for user: " + login);
         //String password = loginForm.getPassword();
         String hashPassword = userRepository.findHashedPasswordByUsername(login);
         //tutaj pobrać dane uzytkownika z bazy do porównania
@@ -47,7 +48,7 @@ public class LoginService {
             User username = userRepository.findByUsername(login);
             String token = Jwts.builder()
                     .issuedAt(new Date(timeMillis))
-                    .expiration(new Date(timeMillis+5*60*1000))
+                    .expiration(new Date(timeMillis + 60 * 60 * 1000))
                     .claim("id", username)
                     .claim("role", username.getRole())
                     .signWith(SignatureAlgorithm.HS256,key)

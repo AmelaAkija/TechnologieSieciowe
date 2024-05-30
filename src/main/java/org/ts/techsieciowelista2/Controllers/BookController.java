@@ -75,7 +75,11 @@ public class BookController {
      */
     @GetMapping("/GetAll")
     public @ResponseBody Iterable<Book> getAllBooks() {
-        return bookRepository.findAll();
+        Iterable<Book> books = bookRepository.findAll();
+        for (Book book : books) {
+            book.setBookLoanList(null);
+        }
+        return books;
     }
 
     /**
