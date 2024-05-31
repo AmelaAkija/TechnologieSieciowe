@@ -2,10 +2,10 @@ package org.ts.techsieciowelista2.Controllers;
 
 import jakarta.transaction.Transactional;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.server.ResponseStatusException;
 import org.ts.techsieciowelista2.Book;
+import org.ts.techsieciowelista2.LoanProjection;
 import org.ts.techsieciowelista2.Repositories.BookRepository;
 import org.ts.techsieciowelista2.Repositories.LoanRepository;
 import org.ts.techsieciowelista2.Loan;
@@ -17,6 +17,7 @@ import org.ts.techsieciowelista2.User;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -79,10 +80,10 @@ public class LoanController {
     /**
      * @return all loans in database
      */
-    @PreAuthorize("hasRole('LIBRARIAN')")
+//    @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/GetAll")
-    public @ResponseBody Iterable<Loan> getAllLoans() {
-        return loanRepository.findAll();
+    public @ResponseBody List<LoanProjection> getAllLoans() {
+        return loanRepository.findAllLoanIds();
     }
 
     /**
