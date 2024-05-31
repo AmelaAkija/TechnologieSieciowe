@@ -31,13 +31,13 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTTokenFilter(key), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/Login").permitAll()
-                        .requestMatchers("/users/**").hasRole("LIBRARIAN")
-                        .requestMatchers("/Book/Add").hasRole("LIBRARIAN")
+                        .requestMatchers("/users/**").permitAll()//hasRole("LIBRARIAN")
+                        .requestMatchers("/Book/Add").permitAll()//hasRole("LIBRARIAN")
                         .requestMatchers("/Book/GetAll").permitAll()
                         .requestMatchers("/Book/SearchBy/**").permitAll()
                         .requestMatchers("/Book/deleteBook/**").hasRole("LIBRARIAN")
                         .requestMatchers("/Book/updateBook/**").hasRole("LIBRARIAN")
-                        .requestMatchers("/Loan/**").hasRole("LIBRARIAN"))
+                        .requestMatchers("/Loan/**").permitAll())//hasRole("LIBRARIAN"))
 
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();

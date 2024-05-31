@@ -42,15 +42,16 @@ public class AllUsersController {
      * @throws ResponseStatusException If a user with the same username already exists
      */
     @PostMapping("/Add")
-    @PreAuthorize("hasRole('LIBRARIAN')")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public User addUser(@RequestBody User user) {
+    public ResponseEntity<?> addUser(@RequestBody User user) {
         User userExists = userRepository.findByUsername(user.getUsername());
         if (userExists != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User " + user.getUsername() + " already exists.");
+
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("User " + user.getUsername() + " already exists.");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(user));
     }
     /**
      * @return all users

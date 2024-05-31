@@ -32,13 +32,13 @@ public class BookController {
      * @return book saved in book repository
      * @throws ResponseStatusException If book with the same isbn is already in database
      */
-    @PreAuthorize("hasRole('LIBRARIAN')")
+//    @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping("/Add")
     @ResponseStatus(code = HttpStatus.CREATED)
     public Book addBook(@RequestBody Book book) {
         Book bookExists = bookRepository.findByIsbn(book.getIsbn());
         if (bookExists != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Book " + book.getIsbn() + " already in database.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Book with ISBN " + book.getIsbn() + " already in database.");
         }
         return bookRepository.save(book);
     }
