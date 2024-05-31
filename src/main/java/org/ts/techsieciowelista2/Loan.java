@@ -1,5 +1,6 @@
 package org.ts.techsieciowelista2;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.sql.Date;
@@ -17,10 +18,12 @@ public class Loan {
     private Integer loanPeriod;
     private Date loanDateEnd;
     @ManyToOne(cascade = CascadeType.MERGE)
+    @JsonManagedReference
     @JoinColumn(name = "user_id")
     private User userLoan;
 
     @ManyToOne(cascade = CascadeType.MERGE)
+    @JsonManagedReference
     @JoinColumn(name = "book_id")
     private Book bookLoan;
 

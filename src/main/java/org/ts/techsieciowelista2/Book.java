@@ -1,5 +1,6 @@
 package org.ts.techsieciowelista2;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,9 +20,11 @@ public class Book {
     private Integer publishYear;
     private Integer availableCopies;
     @OneToMany(mappedBy = "bookLoan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Loan> bookLoanList;
 
     @OneToMany(mappedBy = "bookReview", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Review> bookReviewList;
 
 

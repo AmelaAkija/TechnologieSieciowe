@@ -1,5 +1,6 @@
 package org.ts.techsieciowelista2;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,8 +20,10 @@ public class User {
     private String mail;
     private String fullusername;
     @OneToMany(mappedBy = "userLoan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Loan> userLoanList;
     @OneToMany(mappedBy = "userReview", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Review> userReviewList;
 
     public List<Review> getUserReviewList() {
