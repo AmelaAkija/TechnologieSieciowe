@@ -1,6 +1,5 @@
 package org.ts.techsieciowelista2;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -20,11 +19,9 @@ public class Book {
     private Integer publishYear;
     private Integer availableCopies;
     @OneToMany(mappedBy = "bookLoan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Loan> bookLoanList;
 
     @OneToMany(mappedBy = "bookReview", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Review> bookReviewList;
 
 
