@@ -1,5 +1,6 @@
 package org.ts.techsieciowelista2;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.sql.Date;
@@ -16,13 +17,20 @@ public class Loan {
     private Date loanDateStart;
     private Integer loanPeriod;
     private Date loanDateEnd;
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    @JoinColumn(name = "user_id",insertable = false, updatable = false)
     private User userLoan;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "book_id")
+    @Column(name="user_id")//
+    private Integer loanUserId;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    @JoinColumn(name = "book_id",insertable = false, updatable = false)
     private Book bookLoan;
+    @Column(name="book_id")//,insertable = false, updatable = false)
+    private Integer loanBookId;
 
     public Date getLoanDateStart() {
         return loanDateStart;
@@ -74,5 +82,21 @@ public class Loan {
 
     public void setBookLoan(Book bookLoan) {
         this.bookLoan = bookLoan;
+    }
+
+    public Integer getLoanUserId() {
+        return loanUserId;
+    }
+
+    public void setLoanUserId(Integer loanUserId) {
+        this.loanUserId = loanUserId;
+    }
+
+    public Integer getLoanBookId() {
+        return loanBookId;
+    }
+
+    public void setLoanBookId(Integer loanBookId) {
+        this.loanBookId = loanBookId;
     }
 }

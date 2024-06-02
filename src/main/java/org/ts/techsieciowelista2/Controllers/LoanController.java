@@ -1,7 +1,6 @@
 package org.ts.techsieciowelista2.Controllers;
 
 import jakarta.transaction.Transactional;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,7 +16,6 @@ import org.ts.techsieciowelista2.User;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Optional;
 
 /**
  * Loan controller
@@ -47,39 +45,23 @@ public class LoanController {
      */
 //    @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping("/Add")
+    @Transactional
     @ResponseStatus(code = HttpStatus.CREATED)
     public @ResponseBody Loan addLoan(@RequestBody Loan loan) {
-        loan.setLoanDateEnd(null);
-
-        Optional<User> optUser = userRepository.findById(loan.getUserLoan().getUserId());
-        if (!optUser.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with ID " + loan.getUserLoan().getUserId() + " not found");
+        if (loan.getBookLoan() != null) {
+            loan.setLoanBookId(loan.getBookLoan().getBookId());
         }
-        Optional<Book> optBook = bookRepository.findById(loan.getBookLoan().getBookId());
-        if (!optBook.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with ID " + loan.getBookLoan().getBookId() + " not found");
+        if (loan.getUserLoan() != null) {
+            loan.setLoanUserId(loan.getUserLoan().getUserId());
         }
 
-        try {
-            Loan savedLoan = loanRepository.save(loan);
-            Book book = optBook.get();
-            if (book.getAvailableCopies() <= 0) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No available copies of book");
-            } else {
-                int availableCopies = book.getAvailableCopies() - 1;
-                book.setAvailableCopies(availableCopies);
-                bookRepository.save(book);
-            }
-            return savedLoan;
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid user ID provided", e);
-        }
+        return loanRepository.save(loan);
     }
 
     /**
      * @return all loans in database
      */
-    @PreAuthorize("hasRole('LIBRARIAN')")
+//    @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/GetAll")
     public @ResponseBody Iterable<Loan> getAllLoans() {
         return loanRepository.findAll();
