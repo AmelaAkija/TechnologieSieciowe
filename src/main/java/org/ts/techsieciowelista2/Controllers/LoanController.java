@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.server.ResponseStatusException;
 import org.ts.techsieciowelista2.Book;
+import org.ts.techsieciowelista2.InvalidLoanStartDateException;
 import org.ts.techsieciowelista2.Repositories.BookRepository;
 import org.ts.techsieciowelista2.Repositories.LoanRepository;
 import org.ts.techsieciowelista2.Loan;
@@ -16,6 +17,8 @@ import org.ts.techsieciowelista2.User;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Loan controller
@@ -24,6 +27,7 @@ import java.time.LocalDate;
 @RequestMapping("/Loan")
 public class LoanController {
     private final LoanRepository loanRepository;
+    private final List<Loan> finishedLoans;
     private BookRepository bookRepository;
     private UserRepository userRepository;
 
@@ -36,6 +40,7 @@ public class LoanController {
         this.loanRepository = loanRepository;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
+        this.finishedLoans = new ArrayList<>();
     }
 
     /**
@@ -48,6 +53,11 @@ public class LoanController {
     @Transactional
     @ResponseStatus(code = HttpStatus.CREATED)
     public @ResponseBody Loan addLoan(@RequestBody Loan loan) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate StartDate = loan.getLoanDateStart().toLocalDate();
+        if (loan.getLoanDateStart() == null || !StartDate.isEqual(currentDate)) {
+            throw new InvalidLoanStartDateException("The start date of the loan must be the current date.");
+        }
         if (loan.getBookLoan() != null) {
             loan.setLoanBookId(loan.getBookLoan().getBookId());
         }
@@ -61,7 +71,7 @@ public class LoanController {
     /**
      * @return all loans in database
      */
-//    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @GetMapping("/GetAll")
     public @ResponseBody Iterable<Loan> getAllLoans() {
         return loanRepository.findAll();

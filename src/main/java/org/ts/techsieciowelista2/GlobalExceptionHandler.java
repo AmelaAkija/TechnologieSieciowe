@@ -21,5 +21,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleResponseStatusException(ResponseStatusException e) {
         return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
     }
+    /**
+     * Handle InvalidLoanStartDateException
+     * @param e exception
+     * @return message about exception
+     */
+    @ExceptionHandler(InvalidLoanStartDateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public @ResponseBody String handleInvalidLoanStartDateException(InvalidLoanStartDateException e) {
+        return e.getMessage();
+    }
+
+
 
 }

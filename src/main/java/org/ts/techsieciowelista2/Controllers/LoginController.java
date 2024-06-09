@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.ts.techsieciowelista2.LoginForm;
+import org.ts.techsieciowelista2.dto.LoginDto;
 import org.ts.techsieciowelista2.service.LoginService;
 
 /**
@@ -32,14 +33,16 @@ public class LoginController {
      * @return information if login data are correct
      */
     @PostMapping("/Login")
-    public ResponseEntity<String> login(@RequestBody LoginForm loginForm) {
+    public ResponseEntity<?> login(@RequestBody LoginForm loginForm) {
         String token = loginService.userLogin(loginForm);
         if (token == null) {
             return new ResponseEntity<>("Wrong login or password", HttpStatus.UNAUTHORIZED);
         } else {
-            return new ResponseEntity<>(token, HttpStatus.OK);
+            return new ResponseEntity<>(new LoginDto(token), HttpStatus.OK);
         }
     }
+
+
 
 
 }
