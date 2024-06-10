@@ -48,7 +48,7 @@ public class LoanController {
      * @return loan saved in loan repository
      * @throws ResponseStatusException If wanted book has no available copies
      */
-//    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     @PostMapping("/Add")
     @Transactional
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -82,7 +82,7 @@ public class LoanController {
      * @return deleted loan
      */
     @DeleteMapping("/deleteLoan/{loanId}")
-//    @PreAuthorize("hasRole('LIBRARIAN')")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     String removeLoan(@PathVariable Integer loanId) {
         if (loanRepository.existsById(loanId)) {
             loanRepository.deleteById(loanId);
@@ -121,6 +121,15 @@ public class LoanController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan with id " + loanId + " not found");
         }
         }
+
+    /**
+     * @param userId of the user
+     * @return indexes of borrowed books along with the start date and period
+     */
+    @GetMapping("/GetLoansByUser/{userId}")
+    public @ResponseBody Iterable<Object[]> getLoansByUser(@PathVariable int userId) {
+        return loanRepository.findBorrowedBooks(userId);
+    }
 
     }
 

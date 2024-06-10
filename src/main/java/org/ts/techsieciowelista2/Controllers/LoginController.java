@@ -4,13 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 import org.ts.techsieciowelista2.LoginForm;
 import org.ts.techsieciowelista2.dto.LoginDto;
 import org.ts.techsieciowelista2.service.LoginService;
+
+import java.util.Collection;
 
 /**
  * Login controller
@@ -41,8 +43,18 @@ public class LoginController {
             return new ResponseEntity<>(new LoginDto(token), HttpStatus.OK);
         }
     }
+        @GetMapping("/user-role")
+    public ResponseEntity<String> getUserRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
+        String role = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("ROLE_USER");
 
+        return ResponseEntity.ok(role);
+    }
 
 
 }

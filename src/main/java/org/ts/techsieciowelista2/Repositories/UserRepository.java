@@ -17,6 +17,7 @@ public interface UserRepository extends CrudRepository<User,Integer> {
     @Query("SELECT u.password FROM User u WHERE u.username = :username")
     String findHashedPasswordByUsername(@Param("username") String username);
     User findByUsername(String username);
+//    User findByUserId(int userId);
     @Modifying
     @Transactional
     @Query("update User u set u.username = :username, u.password= :password, u.mail =:mail, " +
