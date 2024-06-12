@@ -9,6 +9,9 @@ import org.ts.techsieciowelista2.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
+
+import java.util.Optional;
 
 /**
  * Book controller
@@ -52,6 +55,11 @@ public class BookController {
         return bookRepository.findByIsbn(isbn);
     }
 
+    @GetMapping("/SearchBy/ID/{id}")
+    public Book searchById(@PathVariable int id) {
+        return bookRepository.findById(id);
+    }
+
     /**
      * @param title of wanted book
      * @return book with the given title
@@ -86,13 +94,40 @@ public class BookController {
      * @param bookId of book to be updated
      * @return updated book
      */
+
     @PutMapping("/updateBook/{bookId}")
     @Transactional
     @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<String> updateBook(@PathVariable int bookId, @RequestBody Book book) {
-        bookRepository.updateBook(bookId, book.getTitle(), book.getAuthor(), book.getPublisher(), book.getPublishYear(), book.getAvailableCopies());
-        return ResponseEntity.ok("Book with id " + bookId + " has been updated");
+        Optional<Book> optionalBook = Optional.ofNullable(bookRepository.findById(bookId));
+        if (optionalBook.isPresent()) {
+            Book existingBook = optionalBook.get();
+
+            // Update only if the new value is not null or empty
+            if (book.getTitle() != null && !book.getTitle().isEmpty()) {
+                existingBook.setTitle(book.getTitle());
+            }
+            if (book.getAuthor() != null && !book.getAuthor().isEmpty()) {
+                existingBook.setAuthor(book.getAuthor());
+            }
+            if (book.getPublisher() != null && !book.getPublisher().isEmpty()) {
+                existingBook.setPublisher(book.getPublisher());
+            }
+            if (book.getPublishYear() != null) {
+                existingBook.setPublishYear(book.getPublishYear());
+            }
+            if (book.getAvailableCopies() != null) {
+                existingBook.setAvailableCopies(book.getAvailableCopies());
+            }
+
+            bookRepository.save(existingBook);
+
+            return ResponseEntity.ok("Book with id " + bookId + " has been updated");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
     /**
      * @param bookId of book to be deleted

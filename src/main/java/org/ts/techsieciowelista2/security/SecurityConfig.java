@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/Login").permitAll()
                         .requestMatchers("/user-role").permitAll()
+//                        .requestMatchers("/user-details").permitAll()
 //                        .requestMatchers("/user-id").permitAll()
                         .requestMatchers("/users/**").hasRole("LIBRARIAN")
                         .requestMatchers("/Book/Add").hasRole("LIBRARIAN")
@@ -41,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/Book/updateBook/**").hasRole("LIBRARIAN")
                         .requestMatchers("/Loan/GetAll").hasRole("LIBRARIAN")
                         .requestMatchers("/Loan/GetLoansByUser/**").permitAll()
+                        .requestMatchers("/Loan/deleteLoan/**").hasRole("LIBRARIAN")
                         .requestMatchers("/Loan/Add").hasRole("LIBRARIAN"))
 
                 .sessionManagement(sessionManagement -> sessionManagement

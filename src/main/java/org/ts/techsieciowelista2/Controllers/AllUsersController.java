@@ -4,21 +4,14 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.ts.techsieciowelista2.Repositories.UserRepository;
 import org.ts.techsieciowelista2.User;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 
 /**
  * User controller
@@ -41,10 +34,14 @@ public class AllUsersController {
     }
 
     /**
-     * @param user
+     * @param
      * @return user saved in user repository
      * @throws ResponseStatusException If a user with the same username already exists
      */
+    @GetMapping("/SearchBy/ID/{id}")
+    public Optional<User> searchById(@PathVariable int id) {
+        return userRepository.findById(id);
+    }
     @PostMapping("/Add")
     @PreAuthorize("hasRole('LIBRARIAN')")
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -91,18 +88,36 @@ public class AllUsersController {
      * @return information if user was updated
      * @throws ResponseStatusException If user with id is not in database
      */
-    @PutMapping("/{userId}")
+    @PutMapping("/update/{userId}")
     @Transactional
     @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<String> updateUser(@PathVariable Integer userId, @RequestBody User user) {
-        if (userRepository.existsById(userId)) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.updateUser(userId, user.getUsername(), user.getPassword(), user.getMail(), user.getFullusername());
+        return userRepository.findById(userId).map(existingUser -> {
+            // Check if username is being updated and if it already exists in another user
+            if (user.getUsername() != null && !user.getUsername().equals(existingUser.getUsername())) {
+                if (userRepository.existsByUsername(user.getUsername())) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
+                }
+                existingUser.setUsername(user.getUsername());
+            }
 
-        return ResponseEntity.ok("User with id " + userId + " has been updated");}
-        else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " not found");
-        }
+            if (user.getPassword() != null) {
+                existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+
+            if (user.getMail() != null) {
+                existingUser.setMail(user.getMail());
+            }
+
+            if (user.getFullusername() != null) {
+                existingUser.setFullusername(user.getFullusername());
+            }
+
+            userRepository.save(existingUser);
+
+            return ResponseEntity.ok("User with id " + userId + " has been updated");
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " not found"));
     }
+
 
 }

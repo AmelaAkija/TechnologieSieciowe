@@ -57,4 +57,8 @@ public class LoginService {
         }else{
             return null;
         }}
+
+    public boolean userExists(Integer userId) {
+        return userRepository.existsById(userId);
+    }
 }
