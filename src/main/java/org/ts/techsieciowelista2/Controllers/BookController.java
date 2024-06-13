@@ -46,14 +46,14 @@ public class BookController {
         return bookRepository.save(book);
     }
 
-    /**
-     * @param isbn of wanted book
-     * @return book with the given isbn
-     */
-    @GetMapping("/SearchBy/Isbn/{isbn}")
-    public Book searchByIsbn(@PathVariable String isbn) {
-        return bookRepository.findByIsbn(isbn);
-    }
+//    /**
+//     * @param isbn of wanted book
+//     * @return book with the given isbn
+//     */
+//    @GetMapping("/SearchBy/Isbn/{isbn}")
+//    public Book searchByIsbn(@PathVariable String isbn) {
+//        return bookRepository.findByIsbn(isbn);
+//    }
 
     @GetMapping("/SearchBy/ID/{id}")
     public Book searchById(@PathVariable int id) {
@@ -66,7 +66,7 @@ public class BookController {
      */
     @GetMapping("/SearchBy/title/{title}")
     public @ResponseBody Iterable<Book> searchByTitle(@PathVariable String title) {
-        return bookRepository.findByTitle(title);
+        return bookRepository.findByTitleContaining(title);
     }
 
     /**
@@ -75,7 +75,7 @@ public class BookController {
      */
     @GetMapping("/SearchBy/author/{author}")
     public @ResponseBody Iterable<Book> searchByAuthor(@PathVariable String author) {
-        return bookRepository.findByAuthor(author);
+        return bookRepository.findByAuthorContaining(author);
     }
 
     /**

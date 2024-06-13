@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.ts.techsieciowelista2.Loan;
 
 import java.sql.Date;
+import java.util.List;
 
 @Repository
 public interface LoanRepository extends CrudRepository<Loan,Integer> {
@@ -17,6 +18,7 @@ public interface LoanRepository extends CrudRepository<Loan,Integer> {
     @Query("update Loan l set l.loanDateEnd = :loanDateEnd where l.loanId = :loanId")
     void updateLoan(@Param("loanId") Integer loanId, @Param("loanDateEnd") Date loanDateEnd);
 
-    @Query("SELECT b.title, l.loanDateStart, l.loanPeriod FROM Loan l JOIN l.bookLoan b WHERE l.userLoan.userId = :userId")
-    Iterable<Object[]> findBorrowedBooks(@Param("userId") int userId);
+    List<Loan> findAllByLoanUserId(Integer loanUserId);
+
+    boolean existsByLoanUserIdAndLoanBookIdAndLoanDateEnd(Integer loanUserId, Integer loanBookId, Date loanDateEnd);
 }

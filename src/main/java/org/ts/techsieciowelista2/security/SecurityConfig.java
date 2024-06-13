@@ -40,8 +40,10 @@ public class SecurityConfig {
                         .requestMatchers("/Book/SearchBy/**").permitAll()
                         .requestMatchers("/Book/deleteBook/**").hasRole("LIBRARIAN")
                         .requestMatchers("/Book/updateBook/**").hasRole("LIBRARIAN")
+                        .requestMatchers("/Loan/return/**").hasRole("LIBRARIAN")
                         .requestMatchers("/Loan/GetAll").hasRole("LIBRARIAN")
-                        .requestMatchers("/Loan/GetLoansByUser/**").permitAll()
+                        .requestMatchers("/Loan/SearchBy/ID/**").hasRole("LIBRARIAN")
+                        .requestMatchers("/Loan/GetUserLoans").permitAll()
                         .requestMatchers("/Loan/deleteLoan/**").hasRole("LIBRARIAN")
                         .requestMatchers("/Loan/Add").hasRole("LIBRARIAN"))
 

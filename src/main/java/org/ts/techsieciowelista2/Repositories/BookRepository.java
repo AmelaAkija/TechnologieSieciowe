@@ -8,10 +8,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.ts.techsieciowelista2.Book;
 
+import java.util.List;
+
 @Repository
 public interface BookRepository extends CrudRepository<Book,Integer> {
     Book findById(int bookId);
     Book findByIsbn(String isbn);
+    @Query("SELECT b FROM Book b WHERE LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%'))")
+    Iterable<Book> findByAuthorContaining(@Param("author") String author);
+
+    @Query("SELECT b FROM Book b WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))")
+    Iterable<Book> findByTitleContaining(@Param("title") String title);
     Iterable<Book> findByTitle(String title);
     Iterable<Book> findByAuthor(String author);
     @Modifying
