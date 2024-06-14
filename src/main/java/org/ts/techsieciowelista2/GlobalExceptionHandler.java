@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import org.ts.techsieciowelista2.exceptions.BookNotFoundException;
 import org.ts.techsieciowelista2.exceptions.InvalidLoanStartDateException;
 import org.ts.techsieciowelista2.exceptions.UserAlreadyBorrowBookException;
+import org.ts.techsieciowelista2.exceptions.UserNotFoundException;
 
 /**
  * Exception handler
@@ -38,5 +40,17 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody String handleUserAlreadyBorrowBook(UserAlreadyBorrowBookException e) {
         return e.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public String handleUserNotFoundException(UserNotFoundException ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(BookNotFoundException.class)
+    public String handleBookNotFoundException(BookNotFoundException ex) {
+        return ex.getMessage();
     }
 }

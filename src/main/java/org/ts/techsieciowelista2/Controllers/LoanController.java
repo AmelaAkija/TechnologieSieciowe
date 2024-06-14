@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.server.ResponseStatusException;
 import org.ts.techsieciowelista2.Book;
+import org.ts.techsieciowelista2.User;
+import org.ts.techsieciowelista2.exceptions.BookNotFoundException;
 import org.ts.techsieciowelista2.exceptions.InvalidLoanStartDateException;
 import org.ts.techsieciowelista2.Repositories.BookRepository;
 import org.ts.techsieciowelista2.Repositories.LoanRepository;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.ts.techsieciowelista2.Repositories.UserRepository;
 import org.ts.techsieciowelista2.dto.LoanDto;
 import org.ts.techsieciowelista2.exceptions.UserAlreadyBorrowBookException;
+import org.ts.techsieciowelista2.exceptions.UserNotFoundException;
 import org.ts.techsieciowelista2.security.SecurityUtils;
 
 import java.sql.Date;
@@ -54,7 +57,7 @@ public class LoanController {
     @PostMapping("/Add")
     @Transactional
     @ResponseStatus(code = HttpStatus.CREATED)
-    public @ResponseBody Loan addLoan(@RequestBody Loan loan) throws UserAlreadyBorrowBookException {
+    public @ResponseBody Loan addLoan(@RequestBody Loan loan) throws UserAlreadyBorrowBookException, UserNotFoundException, BookNotFoundException {
         LocalDate currentDate = LocalDate.now();
         LocalDate StartDate = loan.getLoanDateStart().toLocalDate();
         if (loan.getLoanDateStart() == null || !StartDate.isEqual(currentDate)) {
@@ -70,6 +73,16 @@ public class LoanController {
         if(loanRepository.existsByLoanUserIdAndLoanBookIdAndLoanDateEnd(loan.getLoanUserId(), loan.getLoanBookId(), null)) {
             throw new UserAlreadyBorrowBookException("User already borrow this book");
         }
+        Optional<Book> bookOptional = bookRepository.findById(loan.getLoanBookId());
+        if (!bookOptional.isPresent()) {
+            throw new BookNotFoundException("Book with ID " + loan.getLoanBookId() + " not found.");
+        }
+
+        Optional<User> userOpt = userRepository.findById(loan.getLoanUserId());
+        if (!userOpt.isPresent()) {
+            throw new UserNotFoundException("User with ID " + loan.getLoanUserId() + " not found.");
+        }
+
 
         Loan newLoan = loanRepository.save(loan);
         Optional<Book> bookOpt = bookRepository.findById(newLoan.getLoanBookId());
@@ -79,8 +92,12 @@ public class LoanController {
             bookRepository.save(book);
         }
 
+
+
         return newLoan;
     }
+
+
 
     /**
      * @return all loans in database
@@ -98,12 +115,18 @@ public class LoanController {
     @DeleteMapping("/deleteLoan/{loanId}")
     @PreAuthorize("hasRole('LIBRARIAN')")
     String removeLoan(@PathVariable Integer loanId) {
-        if (loanRepository.existsById(loanId)) {
-            loanRepository.deleteById(loanId);
-            return "Loan " + loanId + " has been successfully deleted";
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan with id " + loanId + " not found");
-        }
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan with id " + loanId + " not found"));
+
+
+        Book book = loan.getBookLoan();
+
+
+        book.setAvailableCopies(book.getAvailableCopies() + 1);
+        bookRepository.save(book);
+
+        loanRepository.deleteById(loanId);
+        return "Loan " + loanId + " has been successfully deleted";
 
     }
 

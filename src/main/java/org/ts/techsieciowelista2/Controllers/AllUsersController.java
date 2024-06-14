@@ -93,7 +93,6 @@ public class AllUsersController {
     @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<String> updateUser(@PathVariable Integer userId, @RequestBody User user) {
         return userRepository.findById(userId).map(existingUser -> {
-            // Check if username is being updated and if it already exists in another user
             if (user.getUsername() != null && !user.getUsername().equals(existingUser.getUsername())) {
                 if (userRepository.existsByUsername(user.getUsername())) {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
